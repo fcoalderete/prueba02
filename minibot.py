@@ -1,17 +1,50 @@
-# mini bot
+# mini_bot_uach.py
 import streamlit as st
 
-#st.set_page_config(page_title="Ejemplo Chat", layout="centered")
+# Configuración de la página
+st.set_page_config(
+    page_title="Mini Chatbot FCA-UACH",
+    page_icon="💬",
+    layout="wide"
+)
 
-st.title("💬 Mini Chatbot (solo repite lo que dices)")
+# Perfil en la barra lateral
+st.sidebar.header("Perfil")
+# Reemplace la URL por la de su foto o logo institucional
+st.sidebar.image("https://via.placeholder.com/120", width=120)
+st.sidebar.markdown(
+    "**Dr. José Francisco Aldrete Enríquez**\n\n"
+    "Profesor Investigador\n\n"
+    "Facultad de Contaduría y Administración\n\n"
+    "Universidad Autónoma de Chihuahua"
+)
 
-# Entrada tipo chat (abajo de la pantalla)
-user_input = st.chat_input("Escribe algo...")
+# Título y bienvenida
+st.title("💬 Mini Chatbot FCA-UACH")
+st.markdown(
+    "Bienvenido al mini chatbot. "
+    "Este asistente repetirá textualmente lo que usted escriba."
+)
 
-# Si el usuario escribe algo, mostramos los mensajes
-if user_input:
-    # Mostrar el mensaje del usuario
-    st.chat_message("user").write(user_input)
+# Inicializar historial en sesión
+if "historial" not in st.session_state:
+    st.session_state.historial = []
 
-    # Mostrar una respuesta simple del asistente
-    st.chat_message("assistant").write(f"{user_input} <- eso dijiste")
+# Entrada de usuario
+entrada = st.chat_input("Escriba su mensaje aquí…")
+if entrada:
+    # Guardar y mostrar mensaje del usuario
+    st.session_state.historial.append({"role": "user", "text": entrada})
+    # Generar respuesta
+    respuesta = f"{entrada}  ← eso dijiste"
+    st.session_state.historial.append({"role": "assistant", "text": respuesta})
+
+# Renderizar todo el historial
+for mensaje in st.session_state.historial:
+    st.chat_message(mensaje["role"]).write(mensaje["text"])
+
+# Botón para reiniciar la conversación
+if st.sidebar.button("🔄 Reiniciar chat"):
+    st.session_state.historial = []
+    st.experimental_rerun()
+
