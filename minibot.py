@@ -1,16 +1,15 @@
-# mini_bot_uach.py
+# mini_bot_uach_vertical.py
 import streamlit as st
 
-# Configuración de la página
+# 1. Configuración de la página
 st.set_page_config(
     page_title="Mini Chatbot FCA-UACH",
     page_icon="💬",
     layout="wide"
 )
 
-# Perfil en la barra lateral
+# 2. Perfil en la barra lateral
 st.sidebar.header("Perfil")
-# Reemplace la URL por la de su foto o logo institucional
 st.sidebar.image("https://via.placeholder.com/120", width=120)
 st.sidebar.markdown(
     "**Dr. José Francisco Aldrete Enríquez**\n\n"
@@ -19,32 +18,39 @@ st.sidebar.markdown(
     "Universidad Autónoma de Chihuahua"
 )
 
-# Título y bienvenida
+# 3. Título y bienvenida
 st.title("💬 Mini Chatbot FCA-UACH")
 st.markdown(
     "Bienvenido al mini chatbot. "
-    "Este asistente repetirá textualmente lo que usted escriba."
+    "Este asistente repetirá textualmente lo que usted escriba, "
+    "ahora sus respuestas se mostrarán en vertical."
 )
 
-# Inicializar historial en sesión
+# 4. Inicializar historial
 if "historial" not in st.session_state:
     st.session_state.historial = []
 
-# Entrada de usuario
+# 5. Entrada de usuario
 entrada = st.chat_input("Escriba su mensaje aquí…")
 if entrada:
-    # Guardar y mostrar mensaje del usuario
     st.session_state.historial.append({"role": "user", "text": entrada})
-    # Generar respuesta
     respuesta = f"{entrada}  ← eso dijiste"
     st.session_state.historial.append({"role": "assistant", "text": respuesta})
 
-# Renderizar todo el historial
-for mensaje in st.session_state.historial:
-    st.chat_message(mensaje["role"]).write(mensaje["text"])
+# 6. Botón de reinicio en el cuerpo principal
+if st.button("🔄 Reiniciar chat"):
+    st.session_state.historial.clear()
 
-# Botón para reiniciar la conversación
-if st.sidebar.button("🔄 Reiniciar chat"):
-    st.session_state.historial = []
-    st.experimental_rerun()
+# 7. Mostrar todo el historial (respuestas en vertical)
+for mensaje in st.session_state.historial:
+    if mensaje["role"] == "user":
+        st.markdown(f"**Usted:** {mensaje['text']}")
+    else:
+        # CSS para orientación vertical
+        st.markdown(
+            f"<div style='writing-mode: vertical-lr; white-space: nowrap; "
+            f"border-left: 1px solid #ddd; padding-left: 8px; margin: 8px 0;'>"
+            f"{mensaje['text']}</div>",
+            unsafe_allow_html=True
+        )
 
