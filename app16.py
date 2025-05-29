@@ -4,7 +4,7 @@ from openai import OpenAI
 # Show title and description.
 st.title("💬 Chatbot")
 
-openai_api_key = st.secrets["api_key"] 
+openai_api_key = st.secrets["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"] 
 # Create an OpenAI client.
 client = OpenAI(api_key=openai_api_key)
 
