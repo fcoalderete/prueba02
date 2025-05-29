@@ -1,4 +1,4 @@
-# mini_bot_uach_vertical.py
+# mini_bot_uach_vertical_letras.py
 import streamlit as st
 
 # 1. Configuración de la página
@@ -18,39 +18,34 @@ st.sidebar.markdown(
     "Universidad Autónoma de Chihuahua"
 )
 
-# 3. Título y bienvenida
+# 3. Título y descripción
 st.title("💬 Mini Chatbot FCA-UACH")
 st.markdown(
-    "Bienvenido al mini chatbot. "
-    "Este asistente repetirá textualmente lo que usted escriba, "
-    "ahora sus respuestas se mostrarán en vertical."
+    "Este asistente repetirá lo que usted escriba, "
+    "mostrando cada **letra** de la respuesta en una línea distinta."
 )
 
-# 4. Inicializar historial
+# 4. Inicializar historial en sesión
 if "historial" not in st.session_state:
     st.session_state.historial = []
 
 # 5. Entrada de usuario
 entrada = st.chat_input("Escriba su mensaje aquí…")
 if entrada:
+    # Guardar mensaje del usuario
     st.session_state.historial.append({"role": "user", "text": entrada})
+    # Generar y guardar respuesta
     respuesta = f"{entrada}  ← eso dijiste"
     st.session_state.historial.append({"role": "assistant", "text": respuesta})
 
-# 6. Botón de reinicio en el cuerpo principal
-if st.button("🔄 Reiniciar chat"):
-    st.session_state.historial.clear()
-
-# 7. Mostrar todo el historial (respuestas en vertical)
-for mensaje in st.session_state.historial:
-    if mensaje["role"] == "user":
-        st.markdown(f"**Usted:** {mensaje['text']}")
+# 6. Renderizar historial completo
+for msg in st.session_state.historial:
+    if msg["role"] == "user":
+        st.chat_message("user").write(msg["text"])
     else:
-        # CSS para orientación vertical
-        st.markdown(
-            f"<div style='writing-mode: vertical-lr; white-space: nowrap; "
-            f"border-left: 1px solid #ddd; padding-left: 8px; margin: 8px 0;'>"
-            f"{mensaje['text']}</div>",
+        # Construir un bloque HTML con <br> entre cada carácter
+        html_vertical = "<br>".join(list(msg["text"]))
+        st.chat_message("assistant").markdown(
+            html_vertical,
             unsafe_allow_html=True
         )
-
